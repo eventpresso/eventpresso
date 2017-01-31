@@ -1,0 +1,10 @@
+{
+    "name": "uberpress/events",
+    "description": "An event management plugin for WordPress",
+    "type": "wordpress-plugin",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "jjgrainger/posttypes": "^1.0"
+    }
+}
