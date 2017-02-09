@@ -93,20 +93,24 @@ final class UberPress_Events {
 	 * UberPress Events Constructor.
 	 */
 	public function __construct() {
-		if ( $this->dependencies_met() ) {
-			$this->define_constants();
-			$this->includes();
-			$this->init_modules();
-			$this->init_hooks();
 
-			do_action( 'uberpress_events_loaded' );
-		} else {
-			add_action( 'admin_notices', function() { ?>
-				<div class="notice notice-error">
-					<p><?php _e( 'Your install does not match all requirements for UberPress Events to work properly.', 'uberpress-events' ); ?></p>
-				</div>
-			<?php } );
-		}
+		// Everything will be loaded when UberKit is availiable
+		add_action('uk/init', function() {
+			if ( $this->dependencies_met() ) {
+				$this->define_constants();
+				$this->includes();
+				$this->init_modules();
+				$this->init_hooks();
+
+				do_action( 'uberpress_events_loaded' );
+			} else {
+				add_action( 'admin_notices', function() { ?>
+					<div class="notice notice-error">
+						<p><?php _e( 'Your install does not match all requirements for UberPress Events to work properly.', 'uberpress-events' ); ?></p>
+					</div>
+				<?php } );
+			}
+		});
 	}
 
 	/**
@@ -142,6 +146,12 @@ final class UberPress_Events {
 		// Include the post type class
 		include_once $this->get_dir() . 'includes/class-post-type.php';
 
+		// Include the invited abstraction layer
+		include_once $this->get_dir() . 'includes/models/class-invited.php';
+
+		// Include the metabox class
+		// include_once $this->get_dir() . 'includes/class-metabox.php';
+
 	}
 
 	/**
@@ -160,6 +170,9 @@ final class UberPress_Events {
 	protected function init_modules() {
 		// create a new instance of the cpt class
 		$this->modules['cpt'] = new UberPress_Events_Post_Type;
+
+		// create a new instance of the cpt class
+		$this->modules['invited'] = new UberPress_Events_Invited;
 	}
 
 	/**
@@ -227,3 +240,8 @@ add_action( 'plugins_loaded', function() {
 	// Global for backwards compatibility.
 	$GLOBALS['uberpress_events'] = UBE();
 } );
+
+register_activation_hook(__FILE__, function() {
+    require __DIR__ . '/includes/class-database.php';
+    UberPress_Events_Database::setup_database();
+});
