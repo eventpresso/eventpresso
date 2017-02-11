@@ -2,8 +2,8 @@
 
 /**
  *
- * Plugin Name:             UberPress Events
- * Plugin URI:              http://uberpress.io/plugins/uberpress-events
+ * Plugin Name:             Eventpresso
+ * Plugin URI:              http://uberpress.io/plugins/eventpresso
  *
  * Description:
  * Version:                 0.0.1
@@ -12,17 +12,17 @@
  * Author URI:              http://uberpress.io
  * Author Email:            info@uberpress.io
  *
- * Text Domain:             uberpress-events
+ * Text Domain:             eventpresso
  * Domain Path:             lang/
  *
- * Bitbucket Plugin URI:    uberpress/uberpress-events
+ * Bitbucket Plugin URI:    uberpress/eventpresso
  *
  */
 
-final class UberPress_Events {
+final class Eventpresso {
 
 	/**
-	 * UberPress Events version.
+	 * Eventpresso version.
 	 *
 	 * @var string
 	 */
@@ -31,7 +31,7 @@ final class UberPress_Events {
 	/**
 	 * The single instance of the class.
 	 *
-	 * @var UberPress_Events
+	 * @var Eventpresso
 	 * @since 1.0
 	 */
 	protected static $_instance = null;
@@ -43,14 +43,14 @@ final class UberPress_Events {
 	protected $modules = array();
 
 	/**
-	 * Main UberPress Events Instance.
+	 * Main Eventpresso Instance.
 	 *
-	 * Ensures only one instance of UberPress_Events is loaded or can be loaded.
+	 * Ensures only one instance of Eventpresso is loaded or can be loaded.
 	 *
 	 * @since 1.0
 	 * @static
-	 * @see UBE()
-	 * @return UberPress_Events - Main instance.
+	 * @see Eventpresso()
+	 * @return Eventpresso - Main instance.
 	 */
 	public static function instance() {
 		if ( is_null( self::$_instance ) ) {
@@ -65,7 +65,7 @@ final class UberPress_Events {
 	 * @since 1.0
 	 */
 	public function __clone() {
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'uberpress-events' ), '2.1' );
+		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'eventpresso' ), '2.1' );
 	}
 
 	/**
@@ -74,7 +74,7 @@ final class UberPress_Events {
 	 * @since 1.0
 	 */
 	public function __wakeup() {
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'uberpress-events' ), '2.1' );
+		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'eventpresso' ), '2.1' );
 	}
 
 	/**
@@ -90,27 +90,23 @@ final class UberPress_Events {
 	}
 
 	/**
-	 * UberPress Events Constructor.
+	 * Eventpresso Constructor.
 	 */
 	public function __construct() {
+		if ( $this->dependencies_met() ) {
+			$this->define_constants();
+			$this->includes();
+			$this->init_modules();
+			$this->init_hooks();
 
-		// Everything will be loaded when UberKit is availiable
-		add_action('uk/init', function() {
-			if ( $this->dependencies_met() ) {
-				$this->define_constants();
-				$this->includes();
-				$this->init_modules();
-				$this->init_hooks();
-
-				do_action( 'uberpress_events_loaded' );
-			} else {
-				add_action( 'admin_notices', function() { ?>
-					<div class="notice notice-error">
-						<p><?php _e( 'Your install does not match all requirements for UberPress Events to work properly.', 'uberpress-events' ); ?></p>
-					</div>
-				<?php } );
-			}
-		});
+			do_action( 'eventpresso_loaded' );
+		} else {
+			add_action( 'admin_notices', function() { ?>
+				<div class="notice notice-error">
+					<p><?php _e( 'Your install does not match all requirements for Eventpresso to work properly.', 'eventpresso' ); ?></p>
+				</div>
+			<?php } );
+		}
 	}
 
 	/**
@@ -123,13 +119,12 @@ final class UberPress_Events {
 	}
 
 	/**
-	 * Define UBE Constants.
+	 * Define Eventpresso Constants.
 	 */
 	protected function define_constants() {
-		$this->define( 'UBE_PLUGIN_FILE', __FILE__ );
-		$this->define( 'UBE_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
-		$this->define( 'UBE_VERSION', $this->version );
-		$this->define( 'UBERPRESS_EVENTS_VERSION', $this->version );
+		$this->define( 'EVENTPRESSO_PLUGIN_FILE', __FILE__ );
+		$this->define( 'EVENTPRESSO_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+		$this->define( 'EVENTPRESSO_VERSION', $this->version );
 	}
 
 	/**
@@ -150,7 +145,7 @@ final class UberPress_Events {
 		include_once $this->get_dir() . 'includes/models/class-invited.php';
 
 		// Include the metabox class
-		// include_once $this->get_dir() . 'includes/class-metabox.php';
+		include_once $this->get_dir() . 'includes/class-metabox.php';
 
 	}
 
@@ -169,10 +164,10 @@ final class UberPress_Events {
 	 */
 	protected function init_modules() {
 		// create a new instance of the cpt class
-		$this->modules['cpt'] = new UberPress_Events_Post_Type;
+		$this->modules['cpt'] = new Eventpresso_Post_Type;
 
 		// create a new instance of the cpt class
-		$this->modules['invited'] = new UberPress_Events_Invited;
+		$this->modules['invited'] = new Eventpresso_Invited;
 	}
 
 	/**
@@ -180,7 +175,7 @@ final class UberPress_Events {
 	 * @return string
 	 */
 	public function get_dir() {
-		return plugin_dir_path( UBE_PLUGIN_FILE );
+		return plugin_dir_path( EVENTPRESSO_PLUGIN_FILE );
 	}
 
 	/**
@@ -188,7 +183,7 @@ final class UberPress_Events {
 	 * @return string
 	 */
 	public function get_url() {
-		return plugin_dir_url( UBE_PLUGIN_FILE );
+		return plugin_dir_url( EVENTPRESSO_PLUGIN_FILE );
 	}
 
 	/**
@@ -225,23 +220,23 @@ final class UberPress_Events {
 }
 
 /**
- * Main instance of UberPress Events.
+ * Main instance of Eventpresso.
  *
- * Returns the main instance of UberPress Events to prevent the need to use globals.
+ * Returns the main instance of Eventpresso to prevent the need to use globals.
  *
  * @since  2.1
- * @return UberPress_Events
+ * @return Eventpresso
  */
-function UBE() {
-	return UberPress_Events::instance();
+function Eventpresso() {
+	return Eventpresso::instance();
 }
 
 add_action( 'plugins_loaded', function() {
 	// Global for backwards compatibility.
-	$GLOBALS['uberpress_events'] = UBE();
+	$GLOBALS['eventpresso'] = Eventpresso();
 } );
 
 register_activation_hook(__FILE__, function() {
     require __DIR__ . '/includes/class-database.php';
-    UberPress_Events_Database::setup_database();
+    Eventpresso_Database::setup_database();
 });

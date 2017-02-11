@@ -2,7 +2,7 @@
 
 use PostTypes\PostType;
 
-class UberPress_Events_Post_Type {
+class Eventpresso_Post_Type {
 
 	protected $post_types;
 
@@ -19,7 +19,7 @@ class UberPress_Events_Post_Type {
 	}
 
 	public function create_invitations_page() {
-		add_submenu_page( 'edit.php?post_type=uberpress-events', __('Invitations', 'uberpress-events'), __('Invitations', 'uberpress-events'), 'edit_others_posts', 'uberpress-invitations', array($this, 'render_invitations_page') );
+		add_submenu_page( 'edit.php?post_type=eventpresso', __('Invitations', 'eventpresso'), __('Invitations', 'eventpresso'), 'edit_others_posts', 'eventpresso-invitations', array($this, 'render_invitations_page') );
 	}
 
 	public function render_invitations_page() {
@@ -39,10 +39,10 @@ class UberPress_Events_Post_Type {
 		$event_id = isset($_REQUEST['event']) ? $_REQUEST['event'] : false;
 		if(!$event_id) {
 			?>
-			<h2><?php _e('Please select an event', 'uberpress-events') ?></h2>
+			<h2><?php _e('Please select an event', 'eventpresso') ?></h2>
 			<select onChange="window.location = this.value">
-				<option value=""><?php _e('Select event', 'uberpress-events') ?></option>
-				<?php foreach(get_posts('post_type=uberpress-events&posts_per_page=-1') as $event) : ?>
+				<option value=""><?php _e('Select event', 'eventpresso') ?></option>
+				<?php foreach(get_posts('post_type=eventpresso&posts_per_page=-1') as $event) : ?>
 					<option value="<?php echo add_query_arg( 'event', $event->ID  ); ?>"><?php echo get_the_title($event) ?></option>
 				<?php endforeach; ?>
 			</select>
@@ -53,16 +53,16 @@ class UberPress_Events_Post_Type {
 			?>
 			<h2><?php echo sprintf( __( 'Manage invitations for %s' ), get_the_title($event) ); ?></h2>
 			<div style="width:55%;float:left">
-				<h3><?php _e( 'Invited users', 'uberpress-events' ) ?></h3>
-				<?php $invitations = UBE()->invited->event($event_id)->sort()->offset($start_from, 20)->all(); ?>
+				<h3><?php _e( 'Invited users', 'eventpresso' ) ?></h3>
+				<?php $invitations = Eventpresso()->invited->event($event_id)->sort()->offset($start_from, 20)->all(); ?>
 				<table class="wp-list-table widefat fixed striped posts">
 					<thead>
 						<tr>
 							<th scope="col" class="manage-column" style="width:65%">
-								<?php _e('Name', 'uberpress-events') ?>
+								<?php _e('Name', 'eventpresso') ?>
 							</th>
 							<th scope="col" class="manage-column">
-								<?php _e('Actions', 'uberpress-events') ?>
+								<?php _e('Actions', 'eventpresso') ?>
 							</th>
 						</tr>
 					</thead>
@@ -72,11 +72,11 @@ class UberPress_Events_Post_Type {
 						<tr>
 							<td><?php echo $user->display_name ?> (<?php echo $user->user_email ?>)</td>
 							<td>
-								<a href="<?php echo admin_url("edit.php?post_type=uberpress-events&page=uberpress-invitations&event={$invitation->event_id}&action=revoke&invitation={$invitation->id}") ?>" class="button-primary">
-									<?php _e('Revoke', 'uberpress-events') ?>
+								<a href="<?php echo admin_url("edit.php?post_type=eventpresso&page=eventpresso-invitations&event={$invitation->event_id}&action=revoke&invitation={$invitation->id}") ?>" class="button-primary">
+									<?php _e('Revoke', 'eventpresso') ?>
 								</a>
 								<button class="button-secondary reveal-key" data-key="<?php echo $invitation->invite_key ?>">
-									<?php _e('Reveal key', 'uberpress-events') ?>
+									<?php _e('Reveal key', 'eventpresso') ?>
 								</a>
 							</td>
 						</tr>
@@ -86,7 +86,7 @@ class UberPress_Events_Post_Type {
 				</table>
 			</div>
 			<div style="width:40%;float:right">
-				<h3><?php _e( 'Invite more', 'uberpress-events' ) ?></h3>
+				<h3><?php _e( 'Invite more', 'eventpresso' ) ?></h3>
 
 			</div>
 			<?php
@@ -110,62 +110,80 @@ class UberPress_Events_Post_Type {
 	 * @return void
 	 */
 	public function create_events_post_type() {
-		$this->post_types['events'] = new PostType( 'uberpress-events', array(
+		$this->post_types['events'] = new PostType( 'eventpresso', array(
 			// wp-admin
 			'supports'  => array( 'title', 'editor', 'thumbnail' ),
 			'menu_icon' => 'dashicons-calendar',
 			'labels'    => array(
-				'name'               => _x( 'Events', 'post type general name', 'uberpress-events' ),
-				'singular_name'      => _x( 'Event', 'post type singular name', 'uberpress-events' ),
-				'menu_name'          => _x( 'Events', 'admin menu', 'uberpress-events' ),
-				'name_admin_bar'     => _x( 'Event', 'add new on admin bar', 'uberpress-events' ),
-				'add_new'            => _x( 'Create Event', 'book', 'uberpress-events' ),
-				'add_new_item'       => __( 'Add New Event', 'uberpress-events' ),
-				'new_item'           => __( 'New Event', 'uberpress-events' ),
-				'edit_item'          => __( 'Edit Event', 'uberpress-events' ),
-				'view_item'          => __( 'View Event', 'uberpress-events' ),
-				'all_items'          => __( 'All Events', 'uberpress-events' ),
-				'search_items'       => __( 'Search Events', 'uberpress-events' ),
-				'parent_item_colon'  => __( 'Parent Events:', 'uberpress-events' ),
-				'not_found'          => __( 'No books found.', 'uberpress-events' ),
-				'not_found_in_trash' => __( 'No books found in Trash.', 'uberpress-events' )
+				'name'               => _x( 'Events', 'post type general name', 'eventpresso' ),
+				'singular_name'      => _x( 'Event', 'post type singular name', 'eventpresso' ),
+				'menu_name'          => _x( 'Events', 'admin menu', 'eventpresso' ),
+				'name_admin_bar'     => _x( 'Event', 'add new on admin bar', 'eventpresso' ),
+				'add_new'            => _x( 'Create Event', 'book', 'eventpresso' ),
+				'add_new_item'       => __( 'Add New Event', 'eventpresso' ),
+				'new_item'           => __( 'New Event', 'eventpresso' ),
+				'edit_item'          => __( 'Edit Event', 'eventpresso' ),
+				'view_item'          => __( 'View Event', 'eventpresso' ),
+				'all_items'          => __( 'All Events', 'eventpresso' ),
+				'search_items'       => __( 'Search Events', 'eventpresso' ),
+				'parent_item_colon'  => __( 'Parent Events:', 'eventpresso' ),
+				'not_found'          => __( 'No books found.', 'eventpresso' ),
+				'not_found_in_trash' => __( 'No books found in Trash.', 'eventpresso' )
 			),
 
 			// REST API
 			'show_in_rest'          => true,
 			'rest_base'             => 'events',
-			'rest_controller_class' => 'UberPress_Events_API_Events',
+			'rest_controller_class' => 'Eventpresso_API_Events',
 		) );
 	}
 
 	public function create_events_post_type_columns() {
 		$this->post_types['events']->columns()->add(array(
-			'title' => __( 'Name of the event', 'uberpress-events' ),
-			'invitations' => __( 'Invitations', 'uberpress-events' ),
-			'actions' => __( 'Actions', 'uberpress-events' )
+			'title' => __( 'Name of the event', 'eventpresso' ),
+			'invitations' => __( 'Invitations', 'eventpresso' ),
+			'actions' => __( 'Actions', 'eventpresso' )
 		));
 
 		$this->post_types['events']->columns()->populate('invitations', function($column, $event_id) {
-			echo UBE()->invited->event($event_id)->count() . ' are invited<br>';
-			echo UBE()->invited->event($event_id)->response('pending')->count() . ' have not replied.<br>';
-			echo UBE()->invited->event($event_id)->response('attending')->count() . ' are attending.<br>';
+			echo Eventpresso()->invited->event($event_id)->count() . ' are invited<br>';
+			echo Eventpresso()->invited->event($event_id)->response('pending')->count() . ' have not replied.<br>';
+			echo Eventpresso()->invited->event($event_id)->response('attending')->count() . ' are attending.<br>';
 		});
 
 		$this->post_types['events']->columns()->populate('actions', function($column, $event_id) {
 			?>
-			<a href="<?php echo admin_url("edit.php?post_type=uberpress-events&page=uberpress-invitations&event={$event_id}&action=invite") ?>" class="button-primary"><?php _e( 'Invite more', 'uberpress-events' ) ?></a>
-			<a href="<?php echo admin_url("edit.php?post_type=uberpress-events&page=uberpress-invitations&event={$event_id}") ?>" class="button-secondary"><?php _e( 'Invited', 'uberpress-events' ) ?></a>
+			<a href="<?php echo admin_url("edit.php?post_type=eventpresso&page=eventpresso-invitations&event={$event_id}") ?>" class="button-primary"><?php _e( 'Manage invitations', 'eventpresso' ) ?></a>
 			<?php
 		});
 	}
 
 	public function create_events_metabox() {
-		$metabox = new VP_Metabox(array(
-			'id' => '_uberpress_events',
-			'title' => __( 'Event Information', 'uberpress-events' ),
-			'types' => array( 'uberpress-events' ),
-			'template' => plugin_dir_path( UBE_PLUGIN_FILE ) . '/includes/metabox/events.php'
-		));
+		$metabox = new Eventpresso_Metabox(
+			'info',
+			__('Event', 'eventpresso'),
+			'eventpresso'
+		);
+		$metabox->add_tab( __( 'Basic', 'eventpresso' ) );
+		$metabox->add_field(
+			'date',
+			__( 'Date', 'eventpresso' ),
+			__( 'The date for the event', 'eventpresso' ),
+			'date'
+		);
+		$metabox->add_tab( __( 'Location', 'eventpresso' ) );
+		$metabox->add_field(
+			'venue',
+			__( 'Venue', 'eventpresso' ),
+			__( 'The name of the venue', 'eventpresso' ),
+			'text'
+		);
+		$metabox->add_field(
+			'country',
+			__( 'Country', 'eventpresso' ),
+			__( 'The name of the country', 'eventpresso' ),
+			'text'
+		);
 	}
 
 }

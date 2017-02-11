@@ -1,6 +1,6 @@
 <?php
 
-class UberPress_Events_Invited {
+class Eventpresso_Invited {
 
 	protected $db;
 
@@ -10,7 +10,7 @@ class UberPress_Events_Invited {
 
 	public function __construct() {
 		global $wpdb;
-		$this->table = $wpdb->prefix . 'uberpress_events_invited';
+		$this->table = $wpdb->prefix . 'eventpresso_invited';
 		$this->db = $wpdb;
 	}
 

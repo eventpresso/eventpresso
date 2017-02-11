@@ -1,6 +1,6 @@
 <?php
 
-class UberPress_Events_Database {
+class Eventpresso_Database {
 
 	public static function setup_database() {
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
@@ -11,7 +11,7 @@ class UberPress_Events_Database {
 	public static function setup_invited_table() {
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . 'uberpress_events_invited';
+		$table_name = $wpdb->prefix . 'eventpresso_invited';
 
 		$charset_collate = $wpdb->get_charset_collate();
 
