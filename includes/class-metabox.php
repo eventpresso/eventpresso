@@ -2,7 +2,7 @@
 /**
  *
 
-$metabox = new Eventpresso_Metabox(
+$metabox = new EventPresso_Metabox(
 	'info',
 	__('Event', 'eventpresso'),
 	'eventpresso'
@@ -11,7 +11,7 @@ $metabox->add_field( 'date', __('Date', 'eventpresso'), 'text' );
 
  *
  */
-class Eventpresso_Metabox {
+class EventPresso_Metabox {
 
 	/**
 	 * The ID of the metabox
@@ -86,10 +86,90 @@ class Eventpresso_Metabox {
 
 		// render metaboxes
 		add_action('eventpresso/metabox/text/render', array($this, 'render_text_field'), 1, 3);
+		add_action('eventpresso/metabox/date/render', array($this, 'render_date_field'), 1, 3);
 
 		// save metaboxes
 		add_action('eventpresso/metabox/text/save', array($this, 'save_text_field'), 1, 3);
+		add_action('eventpresso/metabox/date/save', array($this, 'save_date_field'), 1, 3);
 
+		// set custom field settings
+		add_filter('eventpresso/metabox/date/field_data', array($this, 'set_date_settings'), 1);
+
+		// format the field value
+		add_filter('eventpresso/metabox/date/field_value', array($this, 'get_date_value'), 1, 2);
+
+	}
+
+	/**
+	 * Format the date from the database to match the given jQuery format
+	 * @param  string $value
+	 * @param  array $field
+	 * @return value
+	 */
+	public function get_date_value($value, $field) {
+		if($value) {
+			$dateFormat = $this->dateformat($field['options']['dateFormat']);
+			$date = date_create_from_format('Y-m-d', $value);
+			if($date) {
+				$value = $date->format($dateFormat);
+			}
+		}
+		return $value;
+	}
+
+	/**
+	 * Matches each symbol of jquery date format standard
+	 * with PHP equivalent codeword
+	 *
+	 * @param string $date_format
+	 * @return string
+	 */
+	function dateformat($date_format) {
+		$replace = array(
+			0 => array('dd','d','DD','o'),
+			1 => array('MM','M','mm','m'),
+			2 => array('yy','y')
+		);
+		$replacements = array(
+			0 => array('d', 'j', 'l', 'z'),
+			1 => array('F','M','m','n'),
+			2 => array('Y','y')
+		);
+		$found = array();
+		foreach($replace as $type => $format) {
+			foreach($format as $index => $r) {
+				$position = stripos($date_format, $r);
+				if($position !== FALSE) {
+					$date_format = str_replace($r, "[{$type}_{$index}]", $date_format);
+				}
+			}
+		}
+		$pattern = '/\[[^\]]*\]/';
+		preg_match_all($pattern, $date_format, $matches);
+		foreach($matches[0] as $match) {
+			$find = substr($match, 1, strlen($match));
+			$find = substr($find, 0, -1);
+			$fragments = explode('_', $find);
+			$fragments = array_map(function($i){
+				return (int)$i;
+			}, $fragments);
+			$matched = $replacements[$fragments[0]][$fragments[1]];
+			$date_format = str_replace($match, $matched, $date_format);
+		}
+		return $date_format;
+	}
+
+	/**
+	 * Set default date options
+	 * @param array $settings
+	 * @return array
+	 */
+	public function set_date_settings($settings) {
+		return wp_parse_args( $settings, array(
+			'options' => array(
+				'dateFormat' => 'yy-mm-dd'
+			)
+		) );
 	}
 
 	/**
@@ -122,6 +202,23 @@ class Eventpresso_Metabox {
 	}
 
 	/**
+	 * Saves date field
+	 * @return void
+	 */
+	public function save_date_field($data, $field, $post_id) {
+		$value = isset($data[$field['name']]) ? $data[$field['name']] : '';
+		if($value) {
+			$dateFormat = $this->dateformat($field['options']['dateFormat']);
+			$date = date_create_from_format($dateFormat, $value);
+			if($date) {
+				$value = $date->format('Y-m-d');
+			}
+		}
+		$value = apply_filters( "eventpresso/metabox/{$field['type']}/save/sanitize", sanitize_text_field( $value ) );
+		$this->save_meta($field, $value, $post_id);
+	}
+
+	/**
 	 * Saves meta data to a post
 	 * @param  array $field
 	 * @param  string $value
@@ -143,15 +240,23 @@ class Eventpresso_Metabox {
 			wp_enqueue_script(
 				'eventpresso/metabox/scripts/admin',
 				plugins_url( '/assets/js/admin/metabox.js', EVENTPRESSO_PLUGIN_FILE ),
-				array('jquery', 'underscore'),
+				array('jquery', 'underscore', 'jquery-ui-datepicker'),
 				EVENTPRESSO_VERSION
+			);
+
+			// enqueue jquery ui from cdn
+			wp_enqueue_style(
+				'eventpresso/metabox/styles/jquery-ui',
+				'//code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css',
+				array(),
+				'1.12.0'
 			);
 
 			// enqueue the stylesheet
 			wp_enqueue_style(
 				'eventpresso/metabox/styles/admin',
 				plugins_url( '/assets/css/admin/metabox.css', EVENTPRESSO_PLUGIN_FILE ),
-				array(),
+				array( 'eventpresso/metabox/styles/jquery-ui' ),
 				EVENTPRESSO_VERSION
 			);
 		}
@@ -222,7 +327,12 @@ class Eventpresso_Metabox {
 			<ul class="eventpresso-tabs-container">
 				<?php foreach($tabs as $id => $tab) : ?>
 				<li class="eventpresso-tab-container" data-tab="<?php echo $id ?>">
-					<a href="#"><?php echo $tab['label'] ?></a>
+					<a href="#">
+						<?php if($tab['icon']) : ?>
+						<span class="dashicons <?php echo $tab['icon'] ?>"></span>
+						<?php endif; ?>
+						<?php echo $tab['label'] ?>
+					</a>
 				</li>
 				<?php endforeach; ?>
 			</ul>
@@ -232,7 +342,7 @@ class Eventpresso_Metabox {
 				<?php
 					do_action( "eventpresso/metabox/{$field['type']}/render/before", $field, 'metabox-'.$this->id.'-field-'.$field['name'], $this );
 				?>
-				<div class="eventpresso-field-container eventpresso-field-id-<?php echo $name ?>" <?php echo isset($field['tab']) ? 'data-tab="'.$field['tab'].'"' : '' ?>">
+				<div class="eventpresso-field-container eventpresso-field-id-<?php echo $name ?> eventpresso-field-container-<?php echo $field['type'] ?>" <?php echo isset($field['tab']) ? 'data-tab="'.$field['tab'].'"' : '' ?>">
 					<div class="eventpresso-field-label">
 						<label for="metabox-<?php echo $this->id; ?>-field-<?php echo $field['name']; ?>"><?php echo $field['label']; ?></label>
 						<?php if( $field['description'] ) : ?>
@@ -302,8 +412,10 @@ class Eventpresso_Metabox {
 	 * @param string $title
 	 * @param string $description
 	 */
-	public function add_tab($title, $description = '') {
-		return $this->add_field('', $title, $description, 'tab');
+	public function add_tab($title, $icon = null) {
+		return $this->add_field('', $title, '', 'tab', '', array(
+			'icon' => $icon
+		));
 	}
 
 	/**
@@ -333,25 +445,56 @@ class Eventpresso_Metabox {
 		$post = get_post($post);
 		$value = get_post_meta($post->ID, $name, true);
 		if($field) {
-			switch($field['type']) {
-				case 'text':
-					$value = apply_filters( 'eventpresso/metabox/input/field_value', $value, $field, $this );
-					break;
-
-				default:
-					$value = apply_filters( "eventpresso/metabox/{$field['type']}/field_value", $value, $field, $this );
-					break;
-			}
+			$value = apply_filters( "eventpresso/metabox/{$field['type']}/field_value", $value, $field, $this );
 			return $value;
 		} else {
 			return apply_filters( 'eventpresso/metabox/field_value', $value, $this );
 		}
 	}
 
+	/**
+	 * Renders the text field
+	 * @param  array $field
+	 * @param  string $id
+	 * @return void
+	 */
 	public function render_text_field($field, $id) {
-		?>
-		<input class="<?php echo $this->get_field_classes($field); ?>" type="<?php echo $field['type'] ?>" value="<?php echo $this->get_field_value($field); ?>" id="<?php echo $id; ?>" name="<?php echo $this->get_field_name($field); ?>" />
-		<?php
+		$attributes = array(
+			'class' => $this->get_field_classes($field),
+			'type'  => 'text',
+			'value' => $this->get_field_value($field),
+			'id'    => $id,
+			'name'  => $this->get_field_name($field)
+		);
+		echo '<input '.join( ' ', array_map( function( $key ) use ( $attributes ) {
+			if(is_bool($attributes[$key])){
+				return $attributes[$key] ? $key : '';
+			}
+			return $key."='".$attributes[$key]."'";
+		}, array_keys( $attributes ) ) ).' />';
+	}
+
+	/**
+	 * Renders the date field
+	 * @param  array $field
+	 * @param  string $id
+	 * @return void
+	 */
+	public function render_date_field($field, $id) {
+		$attributes = array(
+			'class' => $this->get_field_classes($field),
+			'type'  => 'text',
+			'value' => $this->get_field_value($field),
+			'id'    => $id,
+			'name'  => $this->get_field_name($field),
+			'data-options' => json_encode($field['options'])
+		);
+		echo '<input '.join( ' ', array_map( function( $key ) use ( $attributes ) {
+			if(is_bool($attributes[$key])){
+				return $attributes[$key] ? $key : '';
+			}
+			return $key."='".$attributes[$key]."'";
+		}, array_keys( $attributes ) ) ).' />';
 	}
 
 

@@ -2,7 +2,7 @@
 
 /**
  *
- * Plugin Name:             Eventpresso
+ * Plugin Name:             EventPresso
  * Plugin URI:              http://uberpress.io/plugins/eventpresso
  *
  * Description:
@@ -15,14 +15,12 @@
  * Text Domain:             eventpresso
  * Domain Path:             lang/
  *
- * Bitbucket Plugin URI:    uberpress/eventpresso
- *
  */
 
-final class Eventpresso {
+final class EventPresso {
 
 	/**
-	 * Eventpresso version.
+	 * EventPresso version.
 	 *
 	 * @var string
 	 */
@@ -31,7 +29,7 @@ final class Eventpresso {
 	/**
 	 * The single instance of the class.
 	 *
-	 * @var Eventpresso
+	 * @var EventPresso
 	 * @since 1.0
 	 */
 	protected static $_instance = null;
@@ -43,14 +41,14 @@ final class Eventpresso {
 	protected $modules = array();
 
 	/**
-	 * Main Eventpresso Instance.
+	 * Main EventPresso Instance.
 	 *
-	 * Ensures only one instance of Eventpresso is loaded or can be loaded.
+	 * Ensures only one instance of EventPresso is loaded or can be loaded.
 	 *
 	 * @since 1.0
 	 * @static
-	 * @see Eventpresso()
-	 * @return Eventpresso - Main instance.
+	 * @see EventPresso()
+	 * @return EventPresso - Main instance.
 	 */
 	public static function instance() {
 		if ( is_null( self::$_instance ) ) {
@@ -90,7 +88,7 @@ final class Eventpresso {
 	}
 
 	/**
-	 * Eventpresso Constructor.
+	 * EventPresso Constructor.
 	 */
 	public function __construct() {
 		if ( $this->dependencies_met() ) {
@@ -98,12 +96,11 @@ final class Eventpresso {
 			$this->includes();
 			$this->init_modules();
 			$this->init_hooks();
-
-			do_action( 'eventpresso_loaded' );
+			do_action( 'eventpresso/loaded' );
 		} else {
 			add_action( 'admin_notices', function() { ?>
 				<div class="notice notice-error">
-					<p><?php _e( 'Your install does not match all requirements for Eventpresso to work properly.', 'eventpresso' ); ?></p>
+					<p><?php _e( 'Your install does not match all requirements for EventPresso to work properly.', 'eventpresso' ); ?></p>
 				</div>
 			<?php } );
 		}
@@ -119,7 +116,7 @@ final class Eventpresso {
 	}
 
 	/**
-	 * Define Eventpresso Constants.
+	 * Define EventPresso Constants.
 	 */
 	protected function define_constants() {
 		$this->define( 'EVENTPRESSO_PLUGIN_FILE', __FILE__ );
@@ -141,11 +138,11 @@ final class Eventpresso {
 		// Include the post type class
 		include_once $this->get_dir() . 'includes/class-post-type.php';
 
-		// Include the invited abstraction layer
-		include_once $this->get_dir() . 'includes/models/class-invited.php';
-
 		// Include the metabox class
 		include_once $this->get_dir() . 'includes/class-metabox.php';
+
+		// The addon class
+		include_once $this->get_dir() . '/includes/class-addon.php';
 
 	}
 
@@ -164,10 +161,7 @@ final class Eventpresso {
 	 */
 	protected function init_modules() {
 		// create a new instance of the cpt class
-		$this->modules['cpt'] = new Eventpresso_Post_Type;
-
-		// create a new instance of the cpt class
-		$this->modules['invited'] = new Eventpresso_Invited;
+		$this->modules['cpt'] = new EventPresso_Post_Type;
 	}
 
 	/**
@@ -220,23 +214,15 @@ final class Eventpresso {
 }
 
 /**
- * Main instance of Eventpresso.
+ * Main instance of EventPresso.
  *
- * Returns the main instance of Eventpresso to prevent the need to use globals.
+ * Returns the main instance of EventPresso to prevent the need to use globals.
  *
  * @since  2.1
- * @return Eventpresso
+ * @return EventPresso
  */
-function Eventpresso() {
-	return Eventpresso::instance();
+function EventPresso() {
+	return EventPresso::instance();
 }
 
-add_action( 'plugins_loaded', function() {
-	// Global for backwards compatibility.
-	$GLOBALS['eventpresso'] = Eventpresso();
-} );
-
-register_activation_hook(__FILE__, function() {
-    require __DIR__ . '/includes/class-database.php';
-    Eventpresso_Database::setup_database();
-});
+$GLOBALS['eventpresso'] = EventPresso();

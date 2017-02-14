@@ -6,9 +6,19 @@ var eventpresso_metabox = {
 			this.container = jQuery('.eventpresso-metabox-container');
 			this.fields = jQuery('.eventpresso-fields-container');
 			this.init_tabs();
-
+			this.init_date();
 		}
 
+	},
+
+	init_date() {
+		if( jQuery('.eventpresso-field-container-date').length > 0 ) {
+			jQuery('.eventpresso-field-container-date').each(function() {
+				var $input = jQuery(this).find('input');
+				var options = $input.data('options');
+				$input.datepicker( options );
+			})
+		}
 	},
 
 	init_tabs() {
