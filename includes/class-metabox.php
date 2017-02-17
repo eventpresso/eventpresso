@@ -482,11 +482,11 @@ class EventPresso_Metabox {
 	 */
 	public function render_date_field($field, $id) {
 		$attributes = array(
-			'class' => $this->get_field_classes($field),
-			'type'  => 'text',
-			'value' => $this->get_field_value($field),
-			'id'    => $id,
-			'name'  => $this->get_field_name($field),
+			'class'        => $this->get_field_classes($field),
+			'type'         => 'text',
+			'value'        => $this->get_field_value($field),
+			'id'           => $id,
+			'name'         => $this->get_field_name($field),
 			'data-options' => json_encode($field['options'])
 		);
 		echo '<input '.join( ' ', array_map( function( $key ) use ( $attributes ) {
