@@ -6,6 +6,8 @@ class EventPresso_Post_Type {
 
 	protected $post_types;
 
+	protected $events_metabox;
+
 	/**
 	 * Hook into actions and filters.
 	 *
@@ -65,57 +67,87 @@ class EventPresso_Post_Type {
 	}
 
 	public function create_events_post_type_columns() {
-		$this->post_types['events']->columns()->add(array(
+
+		// Define columns
+		$this->events->columns()->add(array(
 			'title' => __( 'Name of the event', 'eventpresso' ),
+			'event_date' => __('Event Date', 'eventpresso'),
 			'actions' => __( 'Actions', 'eventpresso' )
 		));
 
-		$this->post_types['events']->columns()->populate('actions', function($column, $event_id) {
+		// Hide default columns
+		$this->events->columns()->hide(['author', 'date']);
+
+		// Populate event date column
+		$this->events->columns()->populate('event_date', function($column, $post_id) {
+			echo $this->events_metabox->get_field_value('event_date', $post_id);
+		});
+
+		// Populate actions column
+		$this->events->columns()->populate('actions', function($column, $event_id) {
 			do_action('eventpresso/post_type/events/columns/actions', $column, $event_id);
 		});
 
-		$this->post_types['events'] = apply_filters( 'eventpresso/post_type/events', $this->post_types['events'] );
+		// Sortable columns
+		$this->events->columns()->sortable([
+			'event_date' => ['event_date', false]
+		]);
+
+		// Allow filtering the post type
+		$this->events = apply_filters( 'eventpresso/post_type/events', $this->post_types['events'] );
 
 	}
 
 	public function create_events_metabox() {
 
 		// create metabox
-		$metabox = new EventPresso_Metabox(
+		$this->events_metabox = new EventPresso_Metabox(
 			'info',
 			__('Event', 'eventpresso'),
 			'eventpresso'
 		);
 
-		do_action('eventpresso/metabox/before', $metabox, $this);
+		// Hook into this to add stuff before EventPresso has added its fields
+		do_action('eventpresso/metabox/before', $this->events_metabox, $this);
 
 		// date and time tab
-		$metabox->add_tab( __( 'Date & Time', 'eventpresso' ), 'dashicons-hammer' );
-		$metabox->add_field(
-			'date',
+		$this->events_metabox->add_tab( __( 'Date & Time', 'eventpresso' ), 'dashicons-hammer' );
+
+		// add a field for date
+		$this->events_metabox->add_field(
+			'event_date',
 			__( 'Date', 'eventpresso' ),
 			__( 'The date for the event', 'eventpresso' ),
 			'date'
 		);
-		do_action('eventpresso/metabox/tab/datetime', $metabox, $this);
+
+		// Hook into this to add stuff to the date/time tab
+		do_action('eventpresso/metabox/tab/datetime', $this->events_metabox, $this);
 
 		// Location tab
-		$metabox->add_tab( __( 'Location', 'eventpresso' ), 'dashicons-location' );
-		$metabox->add_field(
+		$this->events_metabox->add_tab( __( 'Location', 'eventpresso' ), 'dashicons-location' );
+
+		// add a field for the venue
+		$this->events_metabox->add_field(
 			'venue',
 			__( 'Venue', 'eventpresso' ),
 			__( 'The name of the venue', 'eventpresso' ),
 			'text'
 		);
-		$metabox->add_field(
+
+		// add a field for the country
+		$this->events_metabox->add_field(
 			'country',
 			__( 'Country', 'eventpresso' ),
 			__( 'The name of the country', 'eventpresso' ),
 			'text'
 		);
-		do_action('eventpresso/metabox/tab/location', $metabox, $this);
 
-		do_action('eventpresso/metabox/after', $metabox, $this);
+		// Hook into this to add stuff to the location tab
+		do_action('eventpresso/metabox/tab/location', $this->events_metabox, $this);
+
+		// Hook into this to add stuff after EventPresso has added its fields
+		do_action('eventpresso/metabox/after', $this->events_metabox, $this);
 	}
 
 }

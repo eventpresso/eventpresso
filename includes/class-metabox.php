@@ -87,10 +87,12 @@ class EventPresso_Metabox {
 		// render metaboxes
 		add_action('eventpresso/metabox/text/render', array($this, 'render_text_field'), 1, 3);
 		add_action('eventpresso/metabox/date/render', array($this, 'render_date_field'), 1, 3);
+		add_action('eventpresso/metabox/checkbox/render', array($this, 'render_checkbox_field'), 1, 3);
 
 		// save metaboxes
 		add_action('eventpresso/metabox/text/save', array($this, 'save_text_field'), 1, 3);
 		add_action('eventpresso/metabox/date/save', array($this, 'save_date_field'), 1, 3);
+		add_action('eventpresso/metabox/checkbox/save', array($this, 'save_checkbox_field'), 1, 3);
 
 		// set custom field settings
 		add_filter('eventpresso/metabox/date/field_data', array($this, 'set_date_settings'), 1);
@@ -197,6 +199,16 @@ class EventPresso_Metabox {
 	 */
 	public function save_text_field($data, $field, $post_id) {
 		$value = isset($data[$field['name']]) ? $data[$field['name']] : '';
+		$value = apply_filters( "eventpresso/metabox/{$field['type']}/save/sanitize", sanitize_text_field( $value ) );
+		$this->save_meta($field, $value, $post_id);
+	}
+
+	/**
+	 * Saves text field
+	 * @return void
+	 */
+	public function save_checkbox_field($data, $field, $post_id) {
+		$value = isset($data[$field['name']]) ? 'yes': 'no';
 		$value = apply_filters( "eventpresso/metabox/{$field['type']}/save/sanitize", sanitize_text_field( $value ) );
 		$this->save_meta($field, $value, $post_id);
 	}
@@ -440,7 +452,7 @@ class EventPresso_Metabox {
 			$field = $name;
 			$name = $name['name'];
 		} else {
-			$field = $this->get_field($name);
+			$field = $this->get_field_data($name);
 		}
 		$post = get_post($post);
 		$value = get_post_meta($post->ID, $name, true);
@@ -465,6 +477,29 @@ class EventPresso_Metabox {
 			'value' => $this->get_field_value($field),
 			'id'    => $id,
 			'name'  => $this->get_field_name($field)
+		);
+		echo '<input '.join( ' ', array_map( function( $key ) use ( $attributes ) {
+			if(is_bool($attributes[$key])){
+				return $attributes[$key] ? $key : '';
+			}
+			return $key."='".$attributes[$key]."'";
+		}, array_keys( $attributes ) ) ).' />';
+	}
+
+	/**
+	 * Renders the checkbox field
+	 * @param  array $field
+	 * @param  string $id
+	 * @return void
+	 */
+	public function render_checkbox_field($field, $id) {
+		$attributes = array(
+			'class'   => $this->get_field_classes($field),
+			'type'    => 'checkbox',
+			'value'   => 'yes',
+			'checked' => $this->get_field_value($field) === 'yes' ? true : false,
+			'id'      => $id,
+			'name'    => $this->get_field_name($field)
 		);
 		echo '<input '.join( ' ', array_map( function( $key ) use ( $attributes ) {
 			if(is_bool($attributes[$key])){
