@@ -5,7 +5,7 @@
  * Plugin Name:             EventPresso
  * Plugin URI:              http://uberpress.io/plugins/eventpresso
  *
- * Description:
+ * Description:             An event management plugin.
  * Version:                 0.0.1
  *
  * Author:                  UberPress
@@ -134,6 +134,9 @@ final class EventPresso {
 
 		// Include rest endpoints
 		require $this->get_dir() . '/includes/api/class-events.php'; // For events
+
+		// Include internationalization
+		require $this->get_dir() . '/includes/class-i18n.php';
 
 		// Include the post type class
 		include_once $this->get_dir() . 'includes/class-post-type.php';
