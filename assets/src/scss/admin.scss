@@ -1,6 +1,6 @@
-@import '../_mixins';
+@import '_mixins';
 
-.eventpresso-metabox-container {
+.eventpressos-metabox-container {
 	@include clearfix;
 	* {
 		box-sizing: border-box;

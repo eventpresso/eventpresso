@@ -1,15 +1,13 @@
 <?php
 /**
+ * EventPresso Metabox
  *
-
-$metabox = new EventPresso_Metabox(
-	'info',
-	__('Event', 'eventpresso'),
-	'eventpresso'
-);
-$metabox->add_field( 'date', __('Date', 'eventpresso'), 'text' );
-
+ * A class to easily create metaboxes
  *
+ * @author 		Tor Morten Jensen
+ * @category 	Class
+ * @package 	EventPresso/Admin
+ * @version     0.0.1
  */
 class EventPresso_Metabox {
 

@@ -1,20 +1,20 @@
 <?php
-
 /**
+ * Plugin Name: EventPresso
+ * Plugin URI: https://eventpresso.net/
+ * Description: The best event management plugin ever made. We're quite humble!
+ * Version: 0.0.1
+ * Author: EventPresso
+ * Author URI: https://eventpresso.net
+ * Requires at least: 4.4
+ * Tested up to: 4.7.2
  *
- * Plugin Name:             EventPresso
- * Plugin URI:              http://uberpress.io/plugins/eventpresso
+ * Text Domain: eventpresso
+ * Domain Path: /lang/
  *
- * Description:             An event management plugin.
- * Version:                 0.0.1
- *
- * Author:                  UberPress
- * Author URI:              http://uberpress.io
- * Author Email:            info@uberpress.io
- *
- * Text Domain:             eventpresso
- * Domain Path:             lang/
- *
+ * @package EventPresso
+ * @category Core
+ * @author Tor Morten Jensen
  */
 
 final class EventPresso {
@@ -144,8 +144,12 @@ final class EventPresso {
 		// Include the metabox class
 		include_once $this->get_dir() . 'includes/class-metabox.php';
 
-		// The addon class
-		include_once $this->get_dir() . '/includes/class-addon.php';
+		// The addon abstract
+		include_once $this->get_dir() . '/includes/abstracts/class-addon.php';
+
+		// Functions for both the front-end and back-end
+		include_once $this->get_dir() . '/includes/functions/core.php';
+
 
 	}
 
@@ -173,6 +177,14 @@ final class EventPresso {
 	 */
 	public function get_dir() {
 		return plugin_dir_path( EVENTPRESSO_PLUGIN_FILE );
+	}
+
+	/**
+	 * Get the path to the plugin templates
+	 * @return string
+	 */
+	public function get_template_dir() {
+		return apply_filter('eventpresso_template_path', 'eventpresso/');
 	}
 
 	/**

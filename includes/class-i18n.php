@@ -1,4 +1,14 @@
 <?php
+/**
+ * EventPresso Internationalization
+ *
+ * A class to easily enable languages for EventPresso and other plugins.
+ *
+ * @author 		Tor Morten Jensen
+ * @category 	Class
+ * @package 	EventPresso/Language
+ * @version     0.0.1
+ */
 
 class EventPresso_i18n {
 

@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "build:js": "babel assets/src/js/admin.js --out-file assets/js/admin.js --presets es2015",
+    "watch:js": "babel assets/src/js/admin.js --watch --out-file assets/js/admin.js --presets es2015",
+    "build:css": "node-sass --include-path assets/src/scss assets/src/scss/admin.scss assets/css/admin.css",
+    "watch:css": "nodemon -e scss -x \"npm run build:css\""
+  },
+  "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-preset-es2015": "^6.22.0",
+    "node-sass": "^4.5.0",
+    "nodemon": "^1.11.0"
+  }
+}

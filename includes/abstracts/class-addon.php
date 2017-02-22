@@ -1,4 +1,14 @@
 <?php
+/**
+ * EventPresso Addon
+ *
+ * A definition for addons to EventPresso
+ *
+ * @author 		Tor Morten Jensen
+ * @category 	Class
+ * @package 	EventPresso/Addons
+ * @version     0.0.1
+ */
 
 class EventPresso_Addon {
 

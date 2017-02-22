@@ -1,4 +1,14 @@
 <?php
+/**
+ * EventPresso Post Types
+ *
+ * A class that defines all post types and metaboxes used in EventPresso
+ *
+ * @author 		Tor Morten Jensen
+ * @category 	Class
+ * @package 	EventPresso/Admin
+ * @version     0.0.1
+ */
 
 use PostTypes\PostType;
 
@@ -8,6 +18,8 @@ class EventPresso_Post_Type {
 
 	protected $events_metabox;
 
+	protected $permalinks;
+
 	/**
 	 * Hook into actions and filters.
 	 *
@@ -15,8 +27,10 @@ class EventPresso_Post_Type {
 	 */
 	public function __construct() {
 		add_action('plugins_loaded', function() {
+			$this->permalinks = get_option( 'eventpresso_permalinks', array() );
 			$this->create_events_post_type();
 			$this->create_events_post_type_columns();
+			$this->create_events_taxonomies();
 			$this->create_events_metabox();
 		});
 	}
@@ -89,13 +103,85 @@ class EventPresso_Post_Type {
 		});
 
 		// Sortable columns
-		$this->events->columns()->sortable([
+		$this->events->columns()->sortable(array(
 			'event_date' => ['event_date', false]
-		]);
+		));
 
 		// Allow filtering the post type
 		$this->events = apply_filters( 'eventpresso/post_type/events', $this->post_types['events'] );
 
+	}
+
+	public function create_events_taxonomies() {
+
+		// register the event category taxonomy
+		$this->events->taxonomy('eventpresso_cat', apply_filters('eventpresso_category_args', array(
+			'label'                 => __( 'Event Categories', 'eventpresso' ),
+			'labels' => array(
+				'name'					=> _x( 'Event Categories', 'Category plural name', 'eventpresso' ),
+				'singular_name'			=> _x( 'Event Category', 'Event Category singular name', 'eventpresso' ),
+				'search_items'			=> __( 'Search Event Categories', 'eventpresso' ),
+				'popular_items'			=> __( 'Popular Event Categories', 'eventpresso' ),
+				'all_items'				=> __( 'All Event Categories', 'eventpresso' ),
+				'parent_item'			=> __( 'Parent Event Category', 'eventpresso' ),
+				'parent_item_colon'		=> __( 'Parent Event Category', 'eventpresso' ),
+				'edit_item'				=> __( 'Edit Event Category', 'eventpresso' ),
+				'update_item'			=> __( 'Update Event Category', 'eventpresso' ),
+				'add_new_item'			=> __( 'Add New Event Category', 'eventpresso' ),
+				'new_item_name'			=> __( 'New Event Category Name', 'eventpresso' ),
+				'add_or_remove_items'	=> __( 'Add or remove Event Categories', 'eventpresso' ),
+				'choose_from_most_used'	=> __( 'Choose from most used Event Categories', 'eventpresso' ),
+				'menu_name'				=> __( 'Categories', 'eventpresso' ),
+			),
+			'hierarchical' => true,
+			'show_ui'               => true,
+			'query_var'             => true,
+			// 'capabilities'          => array(
+			// 	'manage_terms' => 'manage_eventpresso_terms',
+			// 	'edit_terms'   => 'edit_eventpresso_terms',
+			// 	'delete_terms' => 'delete_eventpresso_terms',
+			// 	'assign_terms' => 'assign_eventpresso_terms',
+			// ),
+			'rewrite'          => array(
+				'slug'         => empty( $this->permalinks['category_base'] ) ? _x( 'event-category', 'slug', 'eventpresso' ) : $permalinks['category_base'],
+				'with_front'   => false,
+				'hierarchical' => true,
+			),
+		)));
+
+		// register the event tag taxonomy
+		$this->events->taxonomy('eventpresso_tag', apply_filters('eventpresso_tag_args', array(
+			'label'                 => __( 'Event Tags', 'eventpresso' ),
+			'labels' => array(
+				'name'					=> _x( 'Event Tags', 'Category plural name', 'eventpresso' ),
+				'singular_name'			=> _x( 'Event Tag', 'Event Tag singular name', 'eventpresso' ),
+				'search_items'			=> __( 'Search Event Tags', 'eventpresso' ),
+				'popular_items'			=> __( 'Popular Event Tags', 'eventpresso' ),
+				'all_items'				=> __( 'All Event Tags', 'eventpresso' ),
+				'parent_item'			=> __( 'Parent Event Tag', 'eventpresso' ),
+				'parent_item_colon'		=> __( 'Parent Event Tag', 'eventpresso' ),
+				'edit_item'				=> __( 'Edit Event Tag', 'eventpresso' ),
+				'update_item'			=> __( 'Update Event Tag', 'eventpresso' ),
+				'add_new_item'			=> __( 'Add New Event Tag', 'eventpresso' ),
+				'new_item_name'			=> __( 'New Event Tag Name', 'eventpresso' ),
+				'add_or_remove_items'	=> __( 'Add or remove Event Tags', 'eventpresso' ),
+				'choose_from_most_used'	=> __( 'Choose from most used Event Tags', 'eventpresso' ),
+				'menu_name'				=> __( 'Tags', 'eventpresso' ),
+			),
+			'hierarchical' => false,
+			'show_ui'               => true,
+			'query_var'             => true,
+			// 'capabilities'          => array(
+			// 	'manage_terms' => 'manage_eventpresso_terms',
+			// 	'edit_terms'   => 'edit_eventpresso_terms',
+			// 	'delete_terms' => 'delete_eventpresso_terms',
+			// 	'assign_terms' => 'assign_eventpresso_terms',
+			// ),
+			'rewrite'               => array(
+				'slug'       => empty( $permalinks['tag_base'] ) ? _x( 'event-tag', 'slug', 'eventpresso' ) : $permalinks['tag_base'],
+				'with_front' => false
+			),
+		)));
 	}
 
 	public function create_events_metabox() {
