@@ -1,20 +1,20 @@
-.eventpressos-metabox-container:before, .eventpressos-metabox-container:after {
+.eventpresso-metabox-container:before, .eventpresso-metabox-container:after {
   content: "";
   display: table; }
 
-.eventpressos-metabox-container:after {
+.eventpresso-metabox-container:after {
   clear: both; }
 
-.eventpressos-metabox-container * {
+.eventpresso-metabox-container * {
   box-sizing: border-box; }
 
-.eventpressos-metabox-container ul.eventpresso-tabs-container {
+.eventpresso-metabox-container ul.eventpresso-tabs-container {
   margin: 10px 0 0;
   width: 20%;
   float: left;
   position: relative;
   z-index: 2; }
-  .eventpressos-metabox-container ul.eventpresso-tabs-container li.eventpresso-tab-container {
+  .eventpresso-metabox-container ul.eventpresso-tabs-container li.eventpresso-tab-container {
     margin: 0;
     padding: 5px 10px;
     margin-bottom: 5px;
@@ -24,23 +24,23 @@
     background-color: #fafafa;
     border: 1px solid #d9d9d9;
     cursor: pointer; }
-    .eventpressos-metabox-container ul.eventpresso-tabs-container li.eventpresso-tab-container a {
+    .eventpresso-metabox-container ul.eventpresso-tabs-container li.eventpresso-tab-container a {
       color: #000;
       text-decoration: none;
       outline: none; }
-    .eventpressos-metabox-container ul.eventpresso-tabs-container li.eventpresso-tab-container:hover {
+    .eventpresso-metabox-container ul.eventpresso-tabs-container li.eventpresso-tab-container:hover {
       background-color: #f2f2f2; }
-    .eventpressos-metabox-container ul.eventpresso-tabs-container li.eventpresso-tab-container.eventpresso-tab-active {
+    .eventpresso-metabox-container ul.eventpresso-tabs-container li.eventpresso-tab-container.eventpresso-tab-active {
       background-color: #fff;
       border-right-color: #fff; }
 
-.eventpressos-metabox-container .eventpresso-fields-container .eventpresso-field-container.eventpresso-field-hidden {
+.eventpresso-metabox-container .eventpresso-fields-container .eventpresso-field-container.eventpresso-field-hidden {
   display: none; }
 
-.eventpressos-metabox-container .eventpresso-fields-container .eventpresso-field-container.eventpresso-field-visible {
+.eventpresso-metabox-container .eventpresso-fields-container .eventpresso-field-container.eventpresso-field-visible {
   display: block; }
 
-.eventpressos-metabox-container.eventpresso-metabox-has-tabs .eventpresso-fields-container {
+.eventpresso-metabox-container.eventpresso-metabox-has-tabs .eventpresso-fields-container {
   min-height: 200px;
   position: relative;
   z-index: 1;

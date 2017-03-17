@@ -107,7 +107,7 @@ function eventpresso_get_template_html( $template_name, $args = array(), $templa
  */
 function eventpresso_locate_template( $template_name, $template_path = '', $default_path = '' ) {
 	if ( ! $template_path ) {
-		$template_path = 'EventPresso()->get_template_dir()';
+		$template_path = EventPresso()->get_template_dir();
 	}
 
 	if ( ! $default_path ) {

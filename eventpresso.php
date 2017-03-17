@@ -41,6 +41,12 @@ final class EventPresso {
 	protected $modules = array();
 
 	/**
+	 * Holds all addons
+	 * @var array
+	 */
+	protected $addons = array();
+
+	/**
 	 * Main EventPresso Instance.
 	 *
 	 * Ensures only one instance of EventPresso is loaded or can be loaded.
@@ -96,7 +102,7 @@ final class EventPresso {
 			$this->includes();
 			$this->init_modules();
 			$this->init_hooks();
-			do_action( 'eventpresso/loaded' );
+			do_action( 'eventpresso/loaded', $this );
 		} else {
 			add_action( 'admin_notices', function() { ?>
 				<div class="notice notice-error">
@@ -120,6 +126,7 @@ final class EventPresso {
 	 */
 	protected function define_constants() {
 		$this->define( 'EVENTPRESSO_PLUGIN_FILE', __FILE__ );
+		$this->define( 'EVENTPRESSO_TEMPLATE_DEBUG_MODE', false );
 		$this->define( 'EVENTPRESSO_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 		$this->define( 'EVENTPRESSO_VERSION', $this->version );
 	}
@@ -184,7 +191,7 @@ final class EventPresso {
 	 * @return string
 	 */
 	public function get_template_dir() {
-		return apply_filter('eventpresso_template_path', 'eventpresso/');
+		return apply_filters('eventpresso_template_path', 'eventpresso/');
 	}
 
 	/**
@@ -226,6 +233,45 @@ final class EventPresso {
 		}
 	}
 
+	/**	
+	 * Registers addon
+	 * 
+	 * @param  EventPresso_Addon $addon 
+	 * @return void                   
+	 */
+	public function register_addon( EventPresso_Addon $addon ) {
+		$this->addons[$addon->id] = $addon;
+	}
+
+	/**
+	 * Overloading addons
+	 *
+	 * Allows for fetching addons using: EventPresso()->addon_id()
+	 *
+	 * For example if you'd want to fetch the RSVP addon instance you'd simply use EventPresso()->rsvp()
+	 *
+	 * If you pass any arguments to that addon the first argument would specify the method on the addon instance,
+	 * and all subsequent arguments would be passed as arguments to method.
+	 *
+	 * So if you wanted to call the get_dir method on the RSVP addon. You would simply use EventPresso()->rsvp('get_dir'). 
+	 * Or stick with a nicer syntax: EventPresso()->rsvp()->get_dir()
+	 * 
+	 * @param  string $key The ID of the addon
+	 * @return mixed The requested addon if it exists or just a void when nothing is found.
+	 */
+	public function __call( $id, $arguments ) {
+		if( isset( $this->addons[$id] ) ) {
+			$addon = $this->addons[$id];
+			if(isset($arguments[0])) {
+				$method = $arguments[0];
+				unset($arguments[0]);
+				return call_user_func_array($method, $arguments);
+			}
+			return $addon;
+		}
+	}
+
+
 }
 
 /**
@@ -240,4 +286,4 @@ function EventPresso() {
 	return EventPresso::instance();
 }
 
-$GLOBALS['eventpresso'] = EventPresso();
+EventPresso();

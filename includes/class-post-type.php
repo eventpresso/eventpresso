@@ -14,10 +14,22 @@ use PostTypes\PostType;
 
 class EventPresso_Post_Type {
 
+	/**
+	 * Holds all registered post types
+	 * @var array
+	 */
 	protected $post_types;
 
+	/**
+	 * Holds the metabox instance
+	 * @var EventPresso_Metabox
+	 */
 	protected $events_metabox;
 
+	/**
+	 * Holds the permalinks
+	 * @var array
+	 */
 	protected $permalinks;
 
 	/**

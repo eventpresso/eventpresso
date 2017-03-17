@@ -249,7 +249,7 @@ class EventPresso_Metabox {
 			// enqueue the javascript
 			wp_enqueue_script(
 				'eventpresso/metabox/scripts/admin',
-				plugins_url( '/assets/js/admin/metabox.js', EVENTPRESSO_PLUGIN_FILE ),
+				plugins_url( '/assets/js/admin.js', EVENTPRESSO_PLUGIN_FILE ),
 				array('jquery', 'underscore', 'jquery-ui-datepicker'),
 				EVENTPRESSO_VERSION
 			);
@@ -265,7 +265,7 @@ class EventPresso_Metabox {
 			// enqueue the stylesheet
 			wp_enqueue_style(
 				'eventpresso/metabox/styles/admin',
-				plugins_url( '/assets/css/admin/metabox.css', EVENTPRESSO_PLUGIN_FILE ),
+				plugins_url( '/assets/css/admin.css', EVENTPRESSO_PLUGIN_FILE ),
 				array( 'eventpresso/metabox/styles/jquery-ui' ),
 				EVENTPRESSO_VERSION
 			);

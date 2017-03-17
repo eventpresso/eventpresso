@@ -22,7 +22,7 @@ class EventPresso_Addon {
 	 * Name of the addon
 	 * @var string
 	 */
-	public $id = 'eventpresso_addon';
+	public $id = 'addon';
 
 	/**
 	 * Name of the addon

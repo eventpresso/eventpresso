@@ -14,3 +14,4 @@
 include 'conditional.php';
 include 'event.php';
 include 'template.php';
+include 'asset.php';
