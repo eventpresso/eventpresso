@@ -244,6 +244,19 @@ final class EventPresso {
 	}
 
 	/**
+	 * Gets the API namespace for EventPresso
+	 * @param  [type] $addon [description]
+	 * @return [type]        [description]
+	 */
+	public function get_api_namespace( $addon = null ) {
+		$namespace = 'eventpresso/v1';
+		if($addon) {
+			$namespace .= "/{$addon}";
+		}
+		return $namespace;
+	}
+
+	/**
 	 * Overloading addons
 	 *
 	 * Allows for fetching addons using: EventPresso()->addon_id()

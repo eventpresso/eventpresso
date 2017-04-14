@@ -9,3 +9,11 @@
  * @package 	EventPresso/Events
  * @version     0.0.1
  */
+
+function eventpresso_get_event( $event ) {
+
+	$post = get_post( $event );
+
+	return $post;
+
+}
