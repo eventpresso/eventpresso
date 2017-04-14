@@ -42,7 +42,7 @@ class EventPresso_Post_Type {
 		$this->create_events_post_type();
 		$this->create_events_post_type_columns();
 		$this->create_events_taxonomies();
-		$this->create_events_metabox();
+		add_action('init', array($this, 'create_events_metabox'));
 	}
 
 	/**
@@ -109,7 +109,7 @@ class EventPresso_Post_Type {
 
 		// Populate actions column
 		$this->events->columns()->populate('actions', function($column, $event_id) {
-			do_action('eventpresso/post_type/events/columns/actions', $column, $event_id);
+			do_action('eventpresso/post_type/events/columns/actions', $event_id);
 		});
 
 		// Sortable columns

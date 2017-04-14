@@ -73,7 +73,7 @@ class EventPresso_Metabox {
 	 * Sets up hooks
 	 * @return void
 	 */
-	protected function init_hooks() {
+	public function init_hooks() {
 
 		// add metabox and ready saving
 		add_action('add_meta_boxes', array($this, 'add_meta_box'));

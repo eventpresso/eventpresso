@@ -257,6 +257,16 @@ final class EventPresso {
 	}
 
 	/**
+	 * Gets the API url for EventPresso
+	 * @param  [type] $addon [description]
+	 * @return [type]        [description]
+	 */
+	public function get_api_url( $addon = null ) {
+		$namespace = $this->get_api_namespace($addon);
+		return rest_url($namespace);
+	}
+
+	/**
 	 * Overloading addons
 	 *
 	 * Allows for fetching addons using: EventPresso()->addon_id()
