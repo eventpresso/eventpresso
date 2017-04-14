@@ -38,13 +38,11 @@ class EventPresso_Post_Type {
 	 * @since  1.0
 	 */
 	public function __construct() {
-		add_action('plugins_loaded', function() {
-			$this->permalinks = get_option( 'eventpresso_permalinks', array() );
-			$this->create_events_post_type();
-			$this->create_events_post_type_columns();
-			$this->create_events_taxonomies();
-			$this->create_events_metabox();
-		});
+		$this->permalinks = get_option( 'eventpresso_permalinks', array() );
+		$this->create_events_post_type();
+		$this->create_events_post_type_columns();
+		$this->create_events_taxonomies();
+		$this->create_events_metabox();
 	}
 
 	/**

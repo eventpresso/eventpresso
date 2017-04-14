@@ -299,4 +299,4 @@ function EventPresso() {
 	return EventPresso::instance();
 }
 
-EventPresso();
+add_action('plugins_loaded', 'EventPresso', -1);

@@ -40,7 +40,7 @@ class EventPresso_i18n {
 		$this->textdomain = $textdomain;
 		$this->file = $file ? $file : EVENTPRESSO_PLUGIN_FILE;
 		$this->folder = $folder;
-		add_action('plugins_loaded', array($this, 'load_textdomain'));
+		$this->load_textdomain();
 	}
 
 	/**
