@@ -352,7 +352,7 @@ class EventPresso_Metabox {
 				<?php
 					do_action( "eventpresso/metabox/{$field['type']}/render/before", $field, 'metabox-'.$this->id.'-field-'.$field['name'], $this );
 				?>
-				<div class="eventpresso-field-container eventpresso-field-id-<?php echo $name ?> eventpresso-field-container-<?php echo $field['type'] ?>" <?php echo isset($field['tab']) ? 'data-tab="'.$field['tab'].'"' : '' ?>">
+				<div class="eventpresso-field-container eventpresso-field-id-<?php echo $name ?> eventpresso-field-container-<?php echo $field['type'] ?>" <?php echo isset($field['tab']) ? 'data-tab="'.$field['tab'].'"' : '' ?>>
 					<div class="eventpresso-field-label">
 						<label for="metabox-<?php echo $this->id; ?>-field-<?php echo $field['name']; ?>"><?php echo $field['label']; ?></label>
 						<?php if( $field['description'] ) : ?>
