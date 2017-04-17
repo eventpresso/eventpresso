@@ -55,7 +55,7 @@ class EventPresso_Metabox {
 	 * @param string $context    Metabox context
 	 * @param string $priority   Metabox priority
 	 */
-	public function __construct( $id, $title, $post_types, $context = 'advanced', $priority = 'default' ) {
+	public function __construct( $id, $title, $post_types, $context = 'normal', $priority = 'default' ) {
 		if(!is_array($post_types)) {
 			$post_types = array($post_types);
 		}
@@ -355,15 +355,15 @@ class EventPresso_Metabox {
 				<div class="eventpresso-field-container eventpresso-field-id-<?php echo $name ?> eventpresso-field-container-<?php echo $field['type'] ?>" <?php echo isset($field['tab']) ? 'data-tab="'.$field['tab'].'"' : '' ?>>
 					<div class="eventpresso-field-label">
 						<label for="metabox-<?php echo $this->id; ?>-field-<?php echo $field['name']; ?>"><?php echo $field['label']; ?></label>
-						<?php if( $field['description'] ) : ?>
-						<p class="description"><?php echo $field['description'] ?></p>
-						<?php endif; ?>
 					</div>
 					<div class="eventpresso-field-content">
-						<?php
-							do_action( "eventpresso/metabox/{$field['type']}/render", $field, 'metabox-'.$this->id.'-field-'.$field['name'], $this );
-						?>
+						<?php do_action( "eventpresso/metabox/{$field['type']}/render", $field, 'metabox-'.$this->id.'-field-'.$field['name'], $this ); ?>
 					</div>
+					<?php if( $field['description'] ) : ?>
+					<div class="eventpresso-field-description">
+						<p class="description"><?php echo $field['description'] ?></p>
+					</div>
+					<?php endif; ?>
 				</div>
 				<?php
 					do_action( "eventpresso/metabox/{$field['type']}/render/after", $field, 'metabox-'.$this->id.'-field-'.$field['name'], $this );
